@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "616124543553",
+    "project_id": "globoapp-3a2d8",
+    "storage_bucket": "globoapp-3a2d8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:616124543553:android:dae36064e02b2e2de9ccc0",
+        "android_client_info": {
+          "package_name": "com.example.globoapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_fYT9GHXwoilM7rsCM3qqFm0zXmr3GYM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
