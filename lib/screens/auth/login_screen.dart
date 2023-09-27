@@ -3,6 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:globoapp/constants/assets.dart';
+import 'package:globoapp/screens/auth/create_account_screen.dart';
+import 'package:globoapp/screens/auth/forgot_password_screen.dart';
+import 'package:globoapp/screens/home/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,11 +22,13 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _showPassword = false;
   bool _loadingAuthentication = false;
 
-  void _validateLoginFields() {
+  Future<void> _validateLoginFields() async {
     if (_loadingAuthentication) return;
     setState(() => _loadingAuthentication = true);
 
-    if (_formKey.currentState!.validate()) _login();
+    if (_formKey.currentState!.validate()) return _login();
+
+    setState(() => _loadingAuthentication = false);
   }
 
   Future<void> _login() async {
@@ -33,12 +38,15 @@ class _LoginScreenState extends State<LoginScreen> {
     final auth = FirebaseAuth.instance;
 
     try {
-      final credentials = await auth.signInWithEmailAndPassword(
+      await auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      print(credentials.user!.uid);
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
     } catch (_) {
       if (!mounted) return;
       const errorMessage = 'Ocorreu um erro ao autenticar, tente novamente';
@@ -129,6 +137,26 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const ForgotPasswordScreen(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'Esqueci minha senha',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 16),
                 SizedBox(
                   width: double.maxFinite,
@@ -136,6 +164,34 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed:
                         _loadingAuthentication ? null : _validateLoginFields,
                     child: const Text('Entrar'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    children: [
+                      const Expanded(child: Divider(endIndent: 16)),
+                      Text(
+                        'ou',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const Expanded(child: Divider(indent: 16)),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: double.maxFinite,
+                  child: OutlinedButton(
+                    onPressed: () async {
+                      _emailController.clear();
+                      _passwordController.clear();
+                      Navigator.of(context).push<bool>(
+                        MaterialPageRoute(
+                          builder: (context) => const CreateAccountScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text('Criar conta'),
                   ),
                 ),
               ],
