@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:globoapp/screens/auth/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:globoapp/firebase_options.dart';
+import 'package:globoapp/screens/home/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,6 +13,11 @@ void main() async {
 
 class GloboApp extends StatelessWidget {
   const GloboApp({super.key});
+
+  Stream<User?> _getCurrentUser() {
+    final auth = FirebaseAuth.instance;
+    return auth.userChanges();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +38,19 @@ class GloboApp extends StatelessWidget {
         ),
         darkTheme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.purple,
+            seedColor: Colors.deepPurple,
             brightness: Brightness.dark,
           ),
           useMaterial3: true,
         ),
         themeMode: ThemeMode.dark,
-        home: const LoginScreen(),
+        home: StreamBuilder(
+          stream: _getCurrentUser(),
+          builder: (context, snapshot) {
+            if (snapshot.data == null) return const LoginScreen();
+            return const HomeScreen();
+          },
+        ),
       ),
     );
   }
